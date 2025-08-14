@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Analysis: Microsoft Copilot Studio Licensing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #0F766E;
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(15, 118, 110, 0.39);
+        }
+        .flowchart-node {
+            border: 2px solid #94A3B8;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .flowchart-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 4rem;
+            position: relative;
+        }
+        .flowchart-connector::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: #94A3B8;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+        .flowchart-arrow::after {
+            content: '▼';
+            position: absolute;
+            bottom: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #64748B;
+            font-size: 1.5rem;
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Chosen Palette: Corporate Clarity (#F8FAFC, #1E293B, #0F766E, #BE123C) -->
+    <!-- Application Structure Plan: A narrative, single-page scrollable application with a sticky navigation header. The flow guides the user from a high-level strategic choice (Internal vs. External) to detailed explanations of the two main licensing paths (M365 vs. Standalone), visualizes the cost implications of each, and concludes with the report's recommended hybrid strategy shown in a flowchart. This structure was chosen to simplify a complex topic by creating a clear decision-making journey, rather than mirroring the report's chapter structure. -->
+    <!-- Visualization & Content Choices: 1. M365 Cost Model -> Goal: Inform -> Viz: Donut Chart -> Interaction: Tooltip -> Justification: Clearly shows the proportion of zero-rated vs. metered features in the M365 license -> Library: Chart.js/Canvas. 2. Standalone Billing Rates -> Goal: Compare -> Viz: Logarithmic Bar Chart -> Interaction: Tooltip -> Justification: Effectively visualizes the 100x cost difference between basic and premium actions, which is the key financial risk of this model -> Library: Chart.js/Canvas. 3. Hybrid Strategy -> Goal: Organize -> Viz: Flowchart -> Interaction: Static -> Justification: Best way to illustrate the recommended organizational structure and decision flow for a hybrid deployment -> Method: HTML/CSS with Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800 leading-tight">Navigating Copilot Studio</h1>
+            <h2 class="text-2xl md:text-4xl font-bold text-teal-700">An Interactive Licensing & Strategy Guide</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">This guide translates the complex world of Microsoft Copilot Studio licensing into a clear, actionable framework to help you make the right strategic and financial decisions for your enterprise.</p>
+        </header>
+
+        <nav class="sticky top-4 z-50 bg-white/80 backdrop-blur-md rounded-xl shadow-md p-2 mb-12 flex flex-wrap justify-center gap-2">
+            <button data-target="core-choice" class="nav-button active font-semibold py-2 px-4 rounded-lg">1. Your Core Choice</button>
+            <button data-target="licensing-paths" class="nav-button font-semibold py-2 px-4 rounded-lg">2. Licensing Models</button>
+            <button data-target="cost-of-conversation" class="nav-button font-semibold py-2 px-4 rounded-lg">3. Cost of Conversation</button>
+            <button data-target="hybrid-strategy" class="nav-button font-semibold py-2 px-4 rounded-lg">4. Hybrid Strategy</button>
+        </nav>
+
+        <main>
+            <section id="core-choice" class="my-16 scroll-mt-24">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-800">Start with Your Strategic Goal</h3>
+                    <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">Your primary objective dictates your licensing path. Are you enhancing internal workflows or building for the world? This initial decision is the most critical one you'll make.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="section-card p-8 text-center transform hover:scale-105 hover:shadow-2xl transition-all duration-300">
+                        <span class="text-6xl">🏢</span>
+                        <h4 class="text-2xl font-bold mt-4 text-slate-800">Internal Productivity</h4>
+                        <p class="mt-2 text-slate-600 min-h-[100px]">Empower employees to automate tasks and customize their Microsoft 365 experience within a secure, predictable ecosystem.</p>
+                        <p class="mt-4 text-xl font-semibold text-teal-700">Your Path: M365 Copilot License</p>
+                    </div>
+                    <div class="section-card p-8 text-center transform hover:scale-105 hover:shadow-2xl transition-all duration-300">
+                        <span class="text-6xl">🌐</span>
+                        <h4 class="text-2xl font-bold mt-4 text-slate-800">External & Advanced Use</h4>
+                        <p class="mt-2 text-slate-600 min-h-[100px]">Build agents for any channel—public websites, mobile apps, and autonomous processes—with maximum flexibility.</p>
+                        <p class="mt-4 text-xl font-semibold text-rose-700">Your Path: Standalone License</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="licensing-paths" class="my-16 scroll-mt-24">
+                 <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-800">The Three Layers of Licensing</h3>
+                    <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">Copilot Studio's capabilities are unlocked through a layered approach, starting with a security foundation and building up to specific product licenses.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="section-card p-6">
+                        <h4 class="text-xl font-bold text-slate-700">Layer 1: M365 E5 (The Foundation)</h4>
+                        <p class="mt-2 text-sm text-slate-600">This is the **governance prerequisite**, not a product license. E5 provides the essential security bedrock (via Microsoft Purview) for a safe AI deployment, plus limited, Teams-only classic bot building.</p>
+                    </div>
+                    <div class="section-card p-6 border-2 border-teal-600">
+                        <h4 class="text-xl font-bold text-teal-700">Layer 2: M365 Copilot License</h4>
+                        <p class="mt-2 text-sm text-slate-600">The primary path for **internal use**. At a predictable per-user cost, it unlocks agent creation but is restricted to the M365 ecosystem. Most core interactions are zero-rated, encouraging broad adoption.</p>
+                    </div>
+                    <div class="section-card p-6 border-2 border-rose-600">
+                        <h4 class="text-xl font-bold text-rose-700">Layer 3: Standalone License</h4>
+                        <p class="mt-2 text-sm text-slate-600">The path for **maximum flexibility**. Licensed via consumption (Message Packs or PAYG), it allows publishing to any channel. This model is powerful but requires strict financial governance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cost-of-conversation" class="my-16 scroll-mt-24">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-rose-700">The Cost of a Conversation</h3>
+                    <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">Under the Standalone (Message Pack or PAYG) model, not all interactions are equal. A "message" is a unit of computational effort, and costs can vary by 100x depending on the agent's action. This makes agent design a critical factor in budget management.</p>
+                </div>
+                <div class="section-card p-6 md:p-8">
+                    <div class="chart-container h-96 md:h-[500px] max-w-4xl">
+                        <canvas id="billingRatesChart"></canvas>
+                    </div>
+                </div>
+                 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="section-card p-6">
+                         <h4 class="text-xl font-bold text-slate-700">M365 Copilot Path: Predictable Costs</h4>
+                         <p class="mt-2 text-slate-600">The M365 license offers a "zero-rated" model for core interactions, meaning they don't consume messages for licensed users. This encourages wide adoption for internal tools without fear of runaway costs. However, be aware that advanced features like Agent Flows and AI Tools are always metered and will consume from a standalone capacity if used.</p>
+                    </div>
+                    <div class="section-card p-6">
+                        <div class="chart-container h-64 max-w-sm">
+                            <canvas id="zeroRatedChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hybrid-strategy" class="my-16 scroll-mt-24">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-800">The Recommended Path: A Hybrid Strategy</h3>
+                    <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">For most large enterprises, the optimal approach is a hybrid model managed by a central Center of Excellence (CoE). This strategy balances broad innovation with strict governance, empowering the entire organization while controlling financial risk.</p>
+                </div>
+                <div class="section-card p-8">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flowchart-node">
+                            <h4 class="font-bold text-lg">AI Center of Excellence (CoE)</h4>
+                            <p class="text-sm text-slate-600">Sets strategy, governance, and manages high-risk/high-reward projects.</p>
+                        </div>
+                        <div class="flowchart-connector flowchart-arrow"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col space-y-4">
+                                <div class="flowchart-node border-teal-600 border-2">
+                                    <h4 class="font-bold text-lg text-teal-700">Citizen Developer Path</h4>
+                                    <p class="text-sm text-slate-600">Business users building internal productivity agents.</p>
+                                </div>
+                                <div class="flowchart-connector flowchart-arrow"></div>
+                                <div class="flowchart-node">
+                                    <h4 class="font-bold">Licensing Model</h4>
+                                    <p class="text-sm text-slate-600">Microsoft 365 Copilot License</p>
+                                    <p class="text-xs mt-1 font-semibold text-green-600">Predictable Cost</p>
+                                </div>
+                                 <div class="flowchart-connector flowchart-arrow"></div>
+                                <div class="flowchart-node">
+                                    <h4 class="font-bold">Use Cases</h4>
+                                    <p class="text-sm text-slate-600">HR Bots, IT Helpdesks, Project Assistants (within M365)</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-4">
+                                <div class="flowchart-node border-rose-600 border-2">
+                                    <h4 class="font-bold text-lg text-rose-700">Professional Developer Path</h4>
+                                    <p class="text-sm text-slate-600">CoE/IT building strategic, external, or complex agents.</p>
+                                </div>
+                                <div class="flowchart-connector flowchart-arrow"></div>
+                                <div class="flowchart-node">
+                                    <h4 class="font-bold">Licensing Model</h4>
+                                    <p class="text-sm text-slate-600">Standalone (Message Packs / PAYG)</p>
+                                     <p class="text-xs mt-1 font-semibold text-red-600">Variable Cost</p>
+                                </div>
+                                 <div class="flowchart-connector flowchart-arrow"></div>
+                                <div class="flowchart-node">
+                                    <h4 class="font-bold">Use Cases</h4>
+                                    <p class="text-sm text-slate-600">Public Support Agents, Autonomous Processes, Mobile App Bots</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = document.querySelectorAll('main section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navButtons.forEach(button => {
+                            button.classList.toggle('active', button.dataset.target === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => observer.observe(section));
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            const wrapLabel = (label, maxLength) => {
+                if (typeof label !== 'string' || label.length <= maxLength) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).length > maxLength && currentLine.length > 0) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = currentLine ? `${currentLine} ${word}` : word;
+                    }
+                }
+                lines.push(currentLine.trim());
+                return lines;
+            };
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+
+            const sharedChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#334155',
+                            font: { family: "'Inter', sans-serif", size: 14 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: { title: tooltipTitleCallback },
+                        titleFont: { family: "'Inter', sans-serif" },
+                        bodyFont: { family: "'Inter', sans-serif" },
+                        backgroundColor: '#1E293B',
+                        titleColor: '#F1F5F9',
+                        bodyColor: '#CBD5E1'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#475569', font: { family: "'Inter', sans-serif" } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: '#475569', font: { family: "'Inter', sans-serif" } },
+                        grid: { color: '#E2E8F0' }
+                    }
+                }
+            };
+
+            const zeroRatedCtx = document.getElementById('zeroRatedChart');
+            if(zeroRatedCtx) {
+                new Chart(zeroRatedCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Zero-Rated Core Interactions', 'Metered Advanced Features'],
+                        datasets: [{
+                            label: 'Interaction Cost Model',
+                            data: [85, 15],
+                            backgroundColor: ['#0F766E', '#BE123C'],
+                            borderColor: '#F8FAFC',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                         plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#334155', font: { family: "'Inter', sans-serif", size: 12 } }
+                            },
+                             tooltip: { ...sharedChartOptions.plugins.tooltip },
+                            title: {
+                                display: true,
+                                text: 'M365 License Cost Model',
+                                color: '#1E293B',
+                                font: { size: 16, weight: 'bold', family: "'Inter', sans-serif" }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const billingRatesCtx = document.getElementById('billingRatesChart');
+            if (billingRatesCtx) {
+                const billingLabels = [
+                    'Classic Answer', 'Generative Answer', 'Agent Action', 'Tenant Graph Grounding',
+                    'Agent Flow Actions (per 100)', 'AI Tools (Basic) (per 10)', 'AI Tools (Standard) (per 10)', 'AI Tools (Premium) (per 10)'
+                ];
+                const wrappedBillingLabels = billingLabels.map(label => wrapLabel(label, 16));
+                new Chart(billingRatesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: wrappedBillingLabels,
+                        datasets: [{
+                            label: 'Messages Consumed per Action',
+                            data: [1, 2, 5, 10, 13, 1, 15, 100],
+                            backgroundColor: [
+                                'rgba(15, 118, 110, 0.4)', 'rgba(15, 118, 110, 0.6)', 'rgba(15, 118, 110, 0.8)',
+                                'rgba(190, 18, 60, 0.5)', 'rgba(190, 18, 60, 0.6)', 'rgba(15, 118, 110, 0.5)', 'rgba(190, 18, 60, 0.7)', 'rgba(190, 18, 60, 0.9)'
+                            ],
+                            borderColor: ['#0F766E', '#0F766E', '#0F766E', '#BE123C', '#BE123C', '#0F766E', '#BE123C', '#BE123C'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        ...sharedChartOptions,
+                        scales: {
+                            ...sharedChartOptions.scales,
+                            y: {
+                                ...sharedChartOptions.scales.y,
+                                type: 'logarithmic',
+                                title: {
+                                    display: true,
+                                    text: 'Message Cost (Logarithmic Scale)',
+                                    color: '#1E293B',
+                                    font: { size: 14, weight: 'bold', family: "'Inter', sans-serif" }
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...sharedChartOptions.plugins,
+                             legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Message Consumption by Action Type (Standalone Model)',
+                                color: '#1E293B',
+                                padding: { bottom: 20 },
+                                font: { size: 18, weight: 'bold', family: "'Inter', sans-serif" }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
