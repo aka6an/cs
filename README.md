@@ -16,3 +16,5 @@ This guide explores various nuances of the AI adoption:
 🌐 Full report (PDF), https://bit.ly/45QBxVW
 
 🌐 Sample use cases (PDF), https://bit.ly/4oDX2Rd
+
+https://cs.o365pti.net/
