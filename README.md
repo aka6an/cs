@@ -1,5 +1,5 @@
 # Copilot Studio: Capabilities, Strategies, Scenarios
-## Basic research into Microsoft Copilot Studio's capabilities, licensing models, and strategic implications for enterprise adoption.
+## Basic research into Microsoft Copilot Studio's capabilities, licensing models, and strategic implications for Enterprise adoption.
 💡 Ready to Supercharge Your Team with AI? 🧠
 
 A critical question for every leader: How do you transform the massive potential of AI into a practical, powerful, and cost-effective tool for your entire organization? 🤔
@@ -11,7 +11,7 @@ This guide explores various nuances of the AI adoption:
 
 ▶️ Our new interactive guide makes it simple. We break down the licensing paths, visualize the costs, and provide a clear, actionable roadmap for implementing a winning hybrid AI strategy. See how you can empower everyone, from citizen developers to pro-dev teams, to innovate safely and effectively. 🔑
 
-
+📺 Copilot Studio: Capabilities, Strategies, Scenarios (podcast style, https://youtu.be/Sz3_gmX6Yv4)
 
 🌐 Full report (PDF), https://bit.ly/45QBxVW
 
